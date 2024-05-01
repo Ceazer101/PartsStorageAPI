@@ -3,23 +3,23 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8082
-EXPOSE 8083
+EXPOSE 8111
+EXPOSE 8112
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["KomponentLagerAPI.csproj", "."]
-RUN dotnet restore "./././KomponentLagerAPI.csproj"
+COPY ["PartStorageApi.csproj", "."]
+RUN dotnet restore "./././PartStorageApi.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./KomponentLagerAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./PartStorageApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./KomponentLagerAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./PartStorageApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "KomponentLagerAPI.dll"]
+ENTRYPOINT ["dotnet", "PartStorageApi.dll"]
